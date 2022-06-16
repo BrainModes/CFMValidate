@@ -19,10 +19,7 @@ and analysis. The performed pipeline for each step contains of the exact same pr
 of applying full brain cost function masking during registration of the brain extracted T1w images to MNI space.
 
 
-
-
-
-.. image:: https://github.com/PatrikBey/CFMValidate/blob/main/docs/_img/ProcessingFramework.png
+![CFMValidate Processing Framework](https://github.com/BrainModes/CFMValidate/blob/main/docs/_img/ProcessingFramework.png)
 
 
 *CFMValidate - Validation* computes a range of agreement measures and analysis to validate the CFM impact along 
