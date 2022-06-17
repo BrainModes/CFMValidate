@@ -29,21 +29,54 @@ The expected input follows the same schema for all validation steps:
 # input folder structure
 /Path/To/Data/
         |___Labels[0]
-            |___sub-0000_image.nii.gz
+            |___sub-0000_processed.nii.gz
         |___Labels[1]
-            |___sub-0000_image.nii.gz
+            |___sub-0000_processed.nii.gz
 ```
 
 
-#Agreement measures
-The agreement measures can be computed on global and local region-of-interest (ROI) level for two input images.
-The
+## Agreement measures
+Agreement measures can be computed on global and local region-of-interest (ROI) level for two input images.
+The given output is one or several .txt files containing the corresponding measures for all subjects present in both directories (Labels[0] and Labels[1]). 
+If the provided input images do not overlap between labels directories an error message is thrown including the mismatching image files.
+Output examples for both levels of agreement measures
 
-#Network metrics
+# global agreement measures (e.g. cortical ribbon agreement)
+creating a single .txt file containing three global agreement measures for all subjects
+```bash
+# dice, measure_jaccard, measure_difference
+9.136842269986961140e-01,8.410852992351787183e-01,-9.919975197253724786e-03
+9.237416153851532030e-01,8.582898201677900962e-01,-6.901903392779281353e-03
+
+```
+# global network agreement measures
+Global agreement can also be computed as the distance between created connectomes. Currently implemented are
+*pearson correlation* between vectorized connectomes and *hausdorff distance*.
 
 
-#Machine learning classification
+# local agreement measures (e.g. ROI dice agreement)
+creating various .txt files containing agreement arrays with N(subjectlist) x N(ROIs)
 
+```bash
+# ['0', '1', '2', ...
+8.934348239771645606e-01,9.763513513513513153e-01,8.810365135453475105e-01,...
+8.527709913848527945e-01,9.609929078014184389e-01,9.088541666666666297e-01,...
+
+```
+
+## Network metrics
+For created functional connectomes (FC) a range of network theoretic measures are computed to evaluate 
+connectomics based differences caused by CFM.
+
+Currently implemented are basic metrics *node degree*, *clustering coefficient*, *betweenness centrality*.
+Again metrics can be computed on local and global scale following the same output structure as above agreement measures.
+
+## Machine learning classification
+To investigate CFM impact on a general downstream analysis step *CFMValidate - validation* also performs
+*random forest* based classification based on provided input matrices. The default parameters perform a 10% cross validation step
+with rebalanced classes and 100 iteration to create a robust estimate of performance.
+Created output contains a .txt file with accuracy measures for each iteration and a .txt file with the corresponding
+feature importance (Gini importance criteria) for each iteration.
 
 
 Container usage:
@@ -61,10 +94,10 @@ To build the validation container from inside this repository run the following 
 
 2. Running 
 
-Both containers follow the same principle of modular calls to enable fast independent deployment within HPC environments.
-
+Example run commands with required input parameters for all validation steps described above.
 
 ```bash
+# computing global agreement measures on extracted cortical ribbon after registration with FSL
     docker run \
         --v "/Path/to/data/":"/data" \
         --e Input="/data/sub-0001_T1w.nii.gz" \
